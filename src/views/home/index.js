@@ -6,6 +6,7 @@ import {
   Button,
   Image,
   Badge,
+  useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
@@ -13,16 +14,16 @@ import usePlatziPunks from "../../hooks/usePlatzi";
 import { useCallback, useEffect, useState } from "react";
 
 const Home = () => {
+  const [isMinting, setIsMinting] = useState(false);
   const [imageSrc, setImageSrc] = useState("");
   const { active, account } = useWeb3React();
   const platziPunks = usePlatziPunks();
+  const toast = useToast();
 
   const getPlatziPunksData = useCallback(async () => {
     if (platziPunks) {
       const totalSupply = await platziPunks.methods.totalSupply().call();
-      const dnaPreview = await platziPunks.methods
-        .deterministicPseudoRandomDNA(totalSupply, account)
-        .call();
+      const dnaPreview = await platziPunks.methods.deterministicPseudoRandomDNA(totalSupply, account).call();
       const image = await platziPunks.methods.imageByDNA(dnaPreview).call();
       setImageSrc(image);
     }
@@ -31,6 +32,38 @@ const Home = () => {
   useEffect(() => {
     getPlatziPunksData();
   }, [getPlatziPunksData]);
+
+  const mint = () => {
+    setIsMinting(true);
+    platziPunks.methods
+      .mint()
+      .send({
+        from: account,
+      })
+      .on('transactionHash', (txHash) => {
+        toast({
+          title: "Transacción enviada",
+          description: txHash,
+          status: 'info'
+        })
+      })
+      .on('receipt', () => {
+        setIsMinting(false);
+        toast({
+          title: "Transacción confirmada",
+          description: "Nunca pares de aprender",
+          status: 'success'
+        })
+      })
+      .on('error', () => {
+        setIsMinting(false);
+        toast({
+          title: "Transacción rechazada",
+          description: "hubo un error",
+          status: 'error'
+        })
+      })
+  };
 
   return (
     <Stack
@@ -89,6 +122,8 @@ const Home = () => {
             bg={"green.400"}
             _hover={{ bg: "green.500" }}
             disabled={!platziPunks}
+            onClick={mint}
+            isLoading={isMinting}
           >
             Obtén tu punk
           </Button>
