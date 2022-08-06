@@ -14,7 +14,6 @@ const Punks = () => {
 
   return (
     <>
-    {/* Vista que carga la galeria */}
       {loading ? (
         <Loading />
       ) : (

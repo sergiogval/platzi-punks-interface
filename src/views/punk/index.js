@@ -14,14 +14,14 @@ import {
 import { useWeb3React } from "@web3-react/core";
 import RequestAccess from "../../components/request-access";
 import PunkCard from "../../components/punk-card";
-import { usePlatziPunksData } from "../../hooks/usePlatziPunksData";
+import { usePlatziPunkData } from "../../hooks/usePlatziPunksData";
 import { useParams } from "react-router-dom";
 import Loading from "../../components/loading";
 
 const Punk = () => {
   const { active, account } = useWeb3React();
   const { tokenId } = useParams();
-  const { loading, punk } = usePlatziPunksData(tokenId);
+  const { loading, punk } = usePlatziPunkData(tokenId);
 
   if (!active) return <RequestAccess />;
 
@@ -39,7 +39,7 @@ const Punk = () => {
             base: "auto",
             md: 0,
           }}
-           name={punk.name}
+          name={punk.name}
           image={punk.image}
         />
         <Button disabled={account !== punk.owner} colorScheme="green">
