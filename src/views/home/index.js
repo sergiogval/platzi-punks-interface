@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import usePlatziPunks from "../../hooks/usePlatzi";
 import { useCallback, useEffect, useState } from "react";
+import useTruncatedAddress from "../../hooks/useTruncatedAddress";
 
 const Home = () => {
   const [isMinting, setIsMinting] = useState(false);
@@ -64,6 +65,8 @@ const Home = () => {
         })
       })
   };
+
+  const truncatedAddress = useTruncatedAddress(account);
 
   return (
     <Stack
@@ -155,7 +158,7 @@ const Home = () => {
               <Badge ml={2}>
                 Address:
                 <Badge ml={1} colorScheme="green">
-                  0x0000...0000
+                  {truncatedAddress}
                 </Badge>
               </Badge>
             </Flex>
